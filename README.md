@@ -4,10 +4,10 @@
 + `initial.js` is the initial javascript file referenced. It contains a large string of encrypted code and the code to decrypt it (and eval it).
 + The decrypted code that is `eval`'ed by `initial.js` can be found in `decrypted.js`.
 + The `asm.js` library code that is referenced in `decrypted.js` can be found in `asm.js`.
-+ Unfinished disassembly attempt of the code dumped from 0x400 to 0x65af.
++ Unfinished disassembly attempt of the code dumped from 0x400 to 0x65af can be found in `disassembly.txt`.
 
 ## Todo
-+ Finish full disassembly with .
++ Finish full disassembly.
 
 ## Links
 + http://werc.iridia.fr/Blog/2015/12/13/0/ -> Important blog article on another useful disassembly attempt.

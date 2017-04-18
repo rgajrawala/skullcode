@@ -1,4 +1,4 @@
-// Disassembly at 0x440 - 0x65ac. (incomplete, see notes for complete disassembly)
+// Disassembly at 0x4400 - 0x65af. (incomplete, see notes for complete disassembly)
 
 rCode = 0x4400
 rParam = 0x97f0
