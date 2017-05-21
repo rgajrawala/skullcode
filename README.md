@@ -14,3 +14,4 @@
 + http://skullcode.com/bootstrap/hexboot.txt -> Read the blog to find out what this is...
 + https://gitlab.com/snippets/11804 -> Dissassembly of code dumped from 0x4400 to 0x65af.
 + http://jsbeautifier.org/ -> Javascript Beautifier
++ http://fake-skullcode-1.shithouse.tv/ -> Fake Skullcode (???)
