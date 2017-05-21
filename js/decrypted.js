@@ -962,9 +962,9 @@ new function() {
         function explainError(errorCode) {
             if (typeof errorCode != "number") {
                 try {
-                    return errorCode.toString()
+                    return errorCode.toString();
                 } catch (error) {
-                    errorCode = v;
+                    errorCode = unknownErrorID;
                 }
             }
 
@@ -977,24 +977,28 @@ new function() {
             return errorExplanations[errorCode];
         }
 
-        function err(a) {
-            throw a >>> 0;
+        function err(errorID) {
+            throw errorID >>> 0;
         }
 
-        function generateId() {
+        function generateID() {
             var id;
 
             do {
                 id = (+new Date ^ 65536 * Math.random() ^ 65536 * Math.random() << 16) >>> 0 | 0;
-            } while (w[id] !== undefined);
+            } while (brains[id] !== undefined);
 
             return id;
         }
 
-        function b() {
-            var a;
-            do a = (+new Date ^ 65536 * Math.random() ^ 65536 * Math.random() << 16) >>> 0 | 0; while (undefined !== C[a]);
-            return a
+        function generateID2() {
+            var id;
+
+            do {
+                id = (+new Date ^ 65536 * Math.random() ^ 65536 * Math.random() << 16) >>> 0 | 0;
+            } while (protocols[id] !== undefined);
+
+            return id;
         }
 
         function printSCError(errorCode) {
@@ -1010,7 +1014,7 @@ new function() {
             System.log("sc error ?: " + explainError(errorCode));
             System.log(errorCode);
 
-            return A;
+            return hostEnvironmentExceptionID;
         }
 
         function logs(a) {
@@ -1038,9 +1042,9 @@ new function() {
 
             size = (size | 0) >>> 13;
 
-            ++D;
+            ++brainInstanceCounter;
 
-            this.id = generateId();
+            this.id = generateID();
             size <<= 13;
             var buffer = new ArrayBuffer(size);
             // new Uint8Array(buffer);
@@ -1063,19 +1067,19 @@ new function() {
             this.heap = buffer;
         }
 
-        var v = 6,
-            A = 7,
+        var unknownErrorID = 6,
+            hostEnvironmentExceptionID = 7,
             errorExplanations = "OK.;Permission Required.;Out of memory.;Invalid operation.;Invalid memory access.;Invalid access alignment.;Unknown error.;Host environment exception.;Halted.;Operation not supported.".split(";");
 
-        var D = 0,
-            w = [],
-            C = [];
+        var brainInstanceCounter = 0,
+            brains = [],
+            protocols = [];
 
         this.explain = explainError;
 
         this.cycle = function(a, b) {
             try {
-                return w[a].brain.cycle(b | 0)
+                return brains[a].brain.cycle(b | 0)
             } catch (error) {
                 return printSCError(error)
             }
@@ -1083,7 +1087,7 @@ new function() {
 
         this.init = function(id, pos, arg, k0, k1, k2, k3) {
             try {
-                w[id].brain.init(w[id].size - 1, pos, arg, k0, k1, k2, k3)
+                brains[id].brain.init(brains[id].size - 1, pos, arg, k0, k1, k2, k3)
             } catch (error) {
                 return printSCError(error)
             }
@@ -1095,7 +1099,7 @@ new function() {
                     throw explainError(9);
                 }
 
-                var programSubbuffer = w[id].bind(startPos, wordArray.length << 2);
+                var programSubbuffer = brains[id].bind(startPos, wordArray.length << 2);
                 for (var byteCounter = 0; byteCounter < wordArray.length && byteCounter < programSubbuffer.length; ++byteCounter) {
                     programSubbuffer[byteCounter] = wordArray[byteCounter];
                 }
@@ -1133,44 +1137,55 @@ new function() {
         this.build = function(heapLength /* array length of 2097152 */) {
             var brainWrapper = new BrainWrapper(heapLength);
             if (!brainWrapper) throw 3;
-            w[brainWrapper.id] = brainWrapper;
+            brains[brainWrapper.id] = brainWrapper;
             return brainWrapper.id;
         };
 
         this.dump = function(id) {
-            return w[id].heap;
+            return brains[id].heap;
         };
 
         this.support = function(a) {
             var d = new Protocol(a);
-            d.id = b();
-            C[d.id] = d;
+            d.id = generateID2();
+            protocols[d.id] = d;
             return a.id = d.id
         };
 
         this.register = function(a) {
-            var b = generateId();
-            w[b] = a;
-            return b
+            var id = generateID();
+            brains[id] = a;
+            return id;
         };
 
         this.connect = function(a, d, c) {
-            var e = w[a];
-            c = w[c];
-            var f = C[d];
+            var e = brains[a];
+            c = brains[c];
+            var f = protocols[d];
             if (!e || !c || !f) throw 3;
             try {
-                if (f = new Protocol(f), f.host = e, f.client = c, f.data = e.bind(f.pos, f.size), f.id = b(), f.direct) try {
-                    C[f.id] = f, c.connect(a, d, f.data)
-                } catch (error) {
-                    throw delete C[f.id], A;
-                } else C[f.id] = f
+                f = new Protocol(f);
+                f.host = e;
+                f.client = c;
+                f.data = e.bind(f.pos, f.size);
+                f.id = generateID2();
+
+                if (f.direct) {
+                    try {
+                        protocols[f.id] = f, c.connect(a, d, f.data)
+                    } catch (error) {
+                        delete protocols[f.id];
+                        throw hostEnvironmentExceptionID;
+                    }
+                } else {
+                    protocols[f.id] = f;
+                }
             } catch (error) {
-                throw A;
+                throw hostEnvironmentExceptionID;
             }
-            return f.id
+            return f.id;
         }
-    }
+    };
 };
 
 new function() {
@@ -1607,5 +1622,5 @@ new function() {
     System.start({
         canvas: "viewport",
         realtime: true
-    })
+    });
 };
