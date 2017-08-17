@@ -1,4 +1,4 @@
-﻿//disassembled by usandfriends
+﻿//disassembled by ...?
 //analyzed, annotated and cleaned up by antony.kikaxa
 
 //summary: there is no follow-up code beyond "keep going" stage
